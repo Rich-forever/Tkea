@@ -10,8 +10,13 @@
   <link rel="icon" type="image/png" href="/TKEA.png" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#FAF8F6" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="TKEA237" />
   <meta name="description"
     content="TKEA237 — Korean products exported to Africa with trusted sourcing, logistics, and trade support." />
+  <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="keywords" content="TKEA237, Korean products, Africa export, trade, sourcing, logistics, Korea to Africa" />
   <meta property="og:title" content="TKEA237 — Tnt.Korea.Export.Afrik.237" />
   <meta property="og:description" content="Korean quality for African markets. Trusted sourcing and export solutions." />
@@ -57,6 +62,13 @@
 </head>
 
 <body class="bg-ivory text-charcoal">
+  <button
+    id="pwa-install-btn"
+    type="button"
+    style="display:none; position:fixed; right:16px; bottom:16px; z-index:9999; background:#111827; color:#fff; border:none; border-radius:9999px; padding:12px 18px; font-weight:600; box-shadow:0 12px 30px rgba(17,24,39,0.2);"
+  >
+    Install app
+  </button>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

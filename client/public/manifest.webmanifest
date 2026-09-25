@@ -1,0 +1,20 @@
+{
+  "name": "TKEA237",
+  "short_name": "TKEA237",
+  "description": "TKEA237 — Korean products exported to Africa with trusted sourcing, logistics, and trade support.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAF8F6",
+  "theme_color": "#FAF8F6",
+  "icons": [
+    {
+      "src": "/TKEA.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
