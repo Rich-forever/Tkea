@@ -267,7 +267,6 @@ export default function Header() {
               )}
               <div className="pt-4 border-t border-black/10 flex flex-col gap-3">
                 <LangSwitcher />
-                <a href={BEEORDER_URL} className="btn btn-primary w-full">{t('cta.order')}</a>
               </div>
             </div>
           </motion.div>
