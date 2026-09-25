@@ -16,6 +16,12 @@ const empty = {
     isActive: true,
 };
 
+const slugify = (text) => String(text || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+
 export default function CategoryEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -98,8 +104,10 @@ export default function CategoryEdit() {
         setFieldErrors({});
 
         const payload = {
+            name: form.nameEn.trim() || form.nameAr.trim() || 'Category',
             nameEn: form.nameEn.trim(),
             nameAr: form.nameAr.trim(),
+            slug: slugify(form.nameEn.trim() || form.nameAr.trim() || 'category'),
             descriptionEn: form.descriptionEn.trim(),
             descriptionAr: form.descriptionAr.trim(),
             order: Number(form.order) || 0,
@@ -250,9 +258,9 @@ export default function CategoryEdit() {
                             </div>
                         )}
 
-                        {activeLanguage === 'ar' && (
+                        {(activeLanguage === 'ko' || activeLanguage === 'ar') && (
                             <div className="grid gap-1">
-                                <label className="text-xs text-black/60">{t('admin.categories.name')} (AR)</label>
+                                <label className="text-xs text-black/60">{t('admin.categories.name')} (KO)</label>
                                 <input
                                     value={form.nameAr}
                                     onChange={(e) => {
@@ -261,8 +269,8 @@ export default function CategoryEdit() {
                                     }}
                                     className={`rounded-xl px-4 py-2 border ${fieldErrors.nameAr ? 'border-red-400' : 'border-black/10'
                                         }`}
-                                    dir="rtl"
-                                    lang="ar"
+                                    dir="ltr"
+                                    lang="ko"
                                 />
                                 {fieldErrors.nameAr && (
                                     <span className="text-xs text-red-600">{fieldErrors.nameAr}</span>
@@ -296,9 +304,9 @@ export default function CategoryEdit() {
                             </div>
                         )}
 
-                        {activeLanguage === 'ar' && (
+                        {(activeLanguage === 'ko' || activeLanguage === 'ar') && (
                             <div className="grid gap-1">
-                                <label className="text-xs text-black/60">{t('admin.categories.description')} (AR)</label>
+                                <label className="text-xs text-black/60">{t('admin.categories.description')} (KO)</label>
                                 <textarea
                                     value={form.descriptionAr}
                                     onChange={(e) => {
@@ -307,8 +315,8 @@ export default function CategoryEdit() {
                                     }}
                                     className={`rounded-xl px-4 py-2 border ${fieldErrors.descriptionAr ? 'border-red-400' : 'border-black/10'
                                         } min-h-[100px]`}
-                                    dir="rtl"
-                                    lang="ar"
+                                    dir="ltr"
+                                    lang="ko"
                                 />
                                 {fieldErrors.descriptionAr && (
                                     <span className="text-xs text-red-600">{fieldErrors.descriptionAr}</span>

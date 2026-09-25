@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="text-sm">
           <div className="font-semibold mb-2 text-footer-text">{t('contact.info_title')}</div>
           <p className="mb-1">{t('contact.owner_name')}</p>
-          <p className="mb-1">{t('footer.email')}: <a className="text-footer-text underline" href="mailto:info@aseelfemme.com">info@aseelfemme.com</a></p>
+          <p className="mb-1">{t('footer.email')}: <a className="text-footer-text underline" href="mailto:hello@tkea237.com">hello@tkea237.com</a></p>
         </div>
         <div className="text-sm">
           <div className="font-semibold mb-2 text-footer-text">{t('footer.explore')}</div>

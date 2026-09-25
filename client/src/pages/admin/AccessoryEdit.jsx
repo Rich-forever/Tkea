@@ -66,8 +66,8 @@ export default function AccessoryEdit() {
     }, [id, navigate, showToast]);
 
     // Determine effective language for labels/placeholders if needed
-    const isAr = activeLanguage === 'ar';
-    const dir = isAr ? 'rtl' : 'ltr';
+    const isKo = activeLanguage === 'ko' || activeLanguage === 'ar';
+    const dir = isKo ? 'ltr' : 'ltr';
 
     const handleUpload = async (file) => {
         if (!file) return;

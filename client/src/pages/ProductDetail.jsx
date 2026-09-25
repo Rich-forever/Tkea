@@ -10,6 +10,12 @@ import ProductLightbox from '../components/ProductLightbox';
 import Breadcrumb from '../components/Breadcrumb';
 import ShareButton from '../components/ShareButton';
 
+const humanizeSpecKey = (key = '') =>
+  String(key)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
 export default function ProductDetail() {
   const { slug } = useParams();
   const [p, setP] = useState(null);
@@ -45,6 +51,7 @@ export default function ProductDetail() {
     : null;
 
   const allImages = [p.heroImageUrl, ...(p.galleryImageUrls || [])].filter(Boolean);
+  const specs = p.specs || {};
 
   const lang = i18n.language.startsWith('ar') ? 'Ar' : 'En';
   const name = p[`name${lang}`] || p.name;
@@ -84,24 +91,22 @@ export default function ProductDetail() {
         )}
       </AnimatePresence>
 
-      <div className="container-px max-w-7xl mx-auto py-6 md:py-10">
-        {/* Mobile: Title first */}
-        <div className="md:hidden mb-6">
-          <h1 className="font-serif text-4xl">{name}</h1>
-          <p className="text-black/70 mt-2">{shortDescription}</p>
+      <div className="container-px max-w-7xl mx-auto py-6 md:py-10 px-3 sm:px-4 md:px-6">
+        <div className="md:hidden mb-5">
+          <h1 className="font-serif text-3xl sm:text-4xl leading-tight">{name}</h1>
+          <p className="text-black/70 mt-2 text-sm sm:text-base">{shortDescription}</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-          {/* Image Section - Order 1 on mobile (after title), Order 1 on desktop (left side) */}
-          <div className="order-1 space-y-2 md:space-y-4">
+        <div className="grid md:grid-cols-2 gap-5 md:gap-10 lg:gap-12">
+          <div className="order-1 space-y-3 w-full">
             <div
-              className="aspect-square w-full rounded-3xl shadow-soft overflow-hidden bg-white relative group cursor-zoom-in"
-              onClick={() => { setLightboxOpen(true); setZoomLevel(1); }}
+              className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl shadow-soft bg-white border border-black/5 cursor-zoom-in aspect-[4/3] sm:aspect-[5/4] md:aspect-[4/3]"
+              onClick={() => setLightboxOpen(true)}
             >
               <img
                 src={activeImage || p.heroImageUrl}
                 alt={name}
-                className="w-full h-full object-cover"
+                className="h-full w-full object-contain bg-white"
               />
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 p-2 rounded-full shadow-sm">
                 <Maximize2 className="w-5 h-5 text-charcoal" />
@@ -121,13 +126,13 @@ export default function ProductDetail() {
 
                 <div
                   ref={scrollRef}
-                  className={`flex gap-3 overflow-x-auto pb-2 scrollbar-hide ${allImages.length <= 4 ? 'justify-center' : ''}`}
+                  className={`flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory ${allImages.length <= 4 ? 'justify-start sm:justify-center' : ''}`}
                 >
                   {allImages.map((img, idx) => (
                     <button
                       key={idx}
                       onClick={() => setActiveImage(img)}
-                      className={`relative w-16 md:w-20 aspect-square rounded-xl overflow-hidden flex-shrink-0 border transition-all ${activeImage === img ? 'border-charcoal ring-1 ring-charcoal' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                      className={`relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 snap-center rounded-xl overflow-hidden border transition-all ${activeImage === img ? 'border-charcoal ring-1 ring-charcoal' : 'border-transparent opacity-70 hover:opacity-100'}`}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
@@ -146,64 +151,37 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* Content Section - Order 2 on both mobile and desktop */}
-          <div className="order-2 pt-2">
-            {/* Mobile Title/Desc (moved here to be after image on mobile, but still before other content) */}
-            <div className="md:hidden mt-8">
-              <h1 className="font-serif text-4xl mb-4">{name}</h1>
-              <p className="text-black/70 mb-6">{shortDescription}</p>
-              <div className="text-lg leading-relaxed text-black/80 whitespace-pre-wrap">
-                {longDescription}
-              </div>
-            </div>
-
-            {/* Desktop Title/Desc */}
+          <div className="order-2 pt-1 sm:pt-2">
             <div className="hidden md:block">
-              <h1 className="font-serif text-5xl mb-6">{name}</h1>
-              <p className="text-xl text-black/60 mb-8 leading-relaxed">
+              <h1 className="font-serif text-4xl lg:text-5xl mb-4 lg:mb-6">{name}</h1>
+              <p className="text-lg text-black/60 mb-6 leading-relaxed">
                 {shortDescription}
               </p>
-              <div className="text-lg leading-relaxed text-black/80 mb-10 whitespace-pre-wrap">
+              <div className="text-base lg:text-lg leading-relaxed text-black/80 mb-8 whitespace-pre-wrap">
                 {longDescription}
               </div>
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              {(p[`tags${lang}`] || p.tags || []).map(tag => <span key={tag} className="text-xs bg-ivory rounded-full px-3 py-1 border border-black/5">{tag}</span>)}
+              {(p[`tags${lang}`] || p.tags || []).map(tag => <span key={tag} className="text-[11px] bg-ivory rounded-full px-3 py-1 border border-black/5">{tag}</span>)}
             </div>
-            <div className="mt-6 flex gap-3">
-              {p.beeorderUrl && <a href={p.beeorderUrl} target="_blank" rel="noreferrer" className="btn btn-primary">{t('product.order_on_beeorder')}</a>}
+            <div className="mt-5 flex flex-col sm:flex-row gap-3">
+              {p.beeorderUrl && <a href={p.beeorderUrl} target="_blank" rel="noreferrer" className="btn btn-primary w-full sm:w-auto">{t('product.order_on_beeorder')}</a>}
               <ShareButton />
             </div>
 
-            {(category || p.shape || p.color || (typeof p.weightGrams === 'number' && !Number.isNaN(p.weightGrams)) || skinTypeLabel || scentProfile) && (
-              <div className="mt-6 rounded-3xl border border-black/5 bg-white/60 backdrop-blur-sm p-5 space-y-4">
+            {(category || (typeof p.weightGrams === 'number' && !Number.isNaN(p.weightGrams)) || skinTypeLabel || scentProfile || Object.keys(specs).length > 0) && (
+              <div className="mt-6 rounded-2xl sm:rounded-3xl border border-black/5 bg-white/60 backdrop-blur-sm p-4 sm:p-5 space-y-4">
                 <div className="text-[11px] font-medium tracking-[0.18em] uppercase text-black/50">
                   {t('product.details')}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm">
                   {category && (
                     <div>
                       <div className="text-[11px] uppercase tracking-wide text-black/50">
                         {t('product.category')}
                       </div>
                       <div className="text-black/80">{category}</div>
-                    </div>
-                  )}
-                  {(p[`shape${lang}`] || p.shape) && (
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wide text-black/50">
-                        {t('product.shape')}
-                      </div>
-                      <div className="text-black/80">{p[`shape${lang}`] || p.shape}</div>
-                    </div>
-                  )}
-                  {(p[`color${lang}`] || p.color) && (
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wide text-black/50">
-                        {t('product.color')}
-                      </div>
-                      <div className="text-black/80">{p[`color${lang}`] || p.color}</div>
                     </div>
                   )}
                   {typeof p.weightGrams === 'number' && !Number.isNaN(p.weightGrams) && (
@@ -232,6 +210,17 @@ export default function ProductDetail() {
                       <div className="text-black/80">{scentProfile}</div>
                     </div>
                   )}
+                  {Object.entries(specs).map(([key, value]) => {
+                    if (value === undefined || value === null || value === '') return null;
+                    return (
+                      <div key={key}>
+                        <div className="text-[11px] uppercase tracking-wide text-black/50">
+                          {humanizeSpecKey(key)}
+                        </div>
+                        <div className="text-black/80">{String(value)}</div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

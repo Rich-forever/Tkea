@@ -13,10 +13,8 @@ export default function Collection() {
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [category, setCategory] = useState('');
   const [skinType, setSkinType] = useState('');
-  const [shape, setShape] = useState('');
   const [ingredient, setIngredient] = useState('');
   const [availableCategories, setAvailableCategories] = useState([]);
-  const [availableShapes, setAvailableShapes] = useState([]);
   const [availableIngredients, setAvailableIngredients] = useState([]);
   const location = useLocation();
 
@@ -33,30 +31,17 @@ export default function Collection() {
     const params = new URLSearchParams();
     if (category) params.set('category', category);
     if (skinType) params.set('skinType', skinType);
-    if (shape) params.set('shapeEn', shape);
     params.set('status', 'PUBLISHED');
     setLoadingProducts(true);
     api.get(`/products?${params.toString()}`)
       .then((r) => setProducts(r.data))
       .finally(() => setLoadingProducts(false));
-  }, [category, skinType, shape]);
+  }, [category, skinType]);
 
   useEffect(() => {
     const params = new URLSearchParams();
     params.set('status', 'PUBLISHED');
-    api.get(`/products?${params.toString()}`).then(r => {
-      const list = r.data || [];
-      // Build unique shapes with both En and Ar values
-      const shapeMap = new Map();
-      list.forEach(p => {
-        const en = p.shapeEn || p.shape;
-        const ar = p.shapeAr || en;
-        if (en && !shapeMap.has(en)) {
-          shapeMap.set(en, { en, ar });
-        }
-      });
-      setAvailableShapes(Array.from(shapeMap.values()));
-    });
+    api.get(`/products?${params.toString()}`);
 
     api.get('/categories').then(r => {
       setAvailableCategories(r.data || []);
@@ -131,20 +116,6 @@ export default function Collection() {
                   ...availableIngredients.map((ing) => ({
                     value: ing.slug,
                     label: ing[`name${lang}`] || ing.name,
-                  })),
-                ]}
-              />
-            )}
-            {availableShapes.length > 0 && (
-              <FilterDropdown
-                label={t('filters.all_shapes')}
-                value={shape}
-                onChange={setShape}
-                options={[
-                  { value: '', label: t('filters.all_shapes') },
-                  ...availableShapes.map((s) => ({
-                    value: s.en,
-                    label: lang === 'Ar' ? (s.ar || s.en) : s.en,
                   })),
                 ]}
               />

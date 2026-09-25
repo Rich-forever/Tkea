@@ -2,11 +2,11 @@
   <img src="client/public/logo_transperent.png" width="120" />
 </p>
 
-<h1 align="center">Aseelfemme</h1>
+<h1 align="center">TKEA237</h1>
 
 <p align="center">
-  Organic handcrafted soap — marketing site + admin panel.<br/>
-  Built for my sister's small business as a side project.
+  Korean products for Africa — export trade marketing site + admin panel.<br/>
+  Built for Tnt.Korea.Export.Afrik.237.
 </p>
 
 <p align="center">
@@ -20,7 +20,7 @@
 
 ## What it is
 
-A marketing website and admin dashboard for **Aseelfemme**, an organic handcrafted soap brand. The public site showcases products with a clean, elegant design. The admin panel lets my sister manage products, ingredients, categories, and content — all backed by Supabase.
+A marketing website and admin dashboard for **TKEA237**, a Korean export and trade brand serving African markets. The public site showcases curated products with a clean, professional design. The admin panel lets the team manage products, ingredients, categories, and content — all backed by Supabase.
 
 **Features:**
 - Product catalog with detail pages

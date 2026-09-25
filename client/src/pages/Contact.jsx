@@ -78,6 +78,17 @@ export default function Contact() {
             <p className="text-secondary-600 text-lg leading-relaxed">{t('contact.intro')}</p>
           </div>
 
+          <div className="flex justify-center lg:justify-start">
+            <div className="relative w-[220px] h-[220px] rounded-full overflow-hidden border-[6px] border-white bg-white shadow-soft ring-1 ring-secondary-200">
+              <div className="absolute inset-0 bg-gradient-to-br from-blush/30 via-white to-mint/30" />
+              <img
+                src="/20260221_141429.jpg"
+                alt="TKEA237 business and export team"
+                className="relative h-full w-full object-cover object-center"
+              />
+            </div>
+          </div>
+
           <div className="bg-secondary-50 p-8 rounded-2xl space-y-6">
             <h2 className="font-serif text-2xl text-primary-dark mb-6">{t('contact.info_title')}</h2>
 
@@ -88,12 +99,12 @@ export default function Contact() {
 
             <div className="space-y-1">
               <div className="text-sm uppercase tracking-wider text-secondary-500 font-semibold">{t('contact.email')}</div>
-              <a href="mailto:info@aseelfemme.com" className="text-lg underline font-medium hover:text-primary-600 transition-colors">info@aseelfemme.com</a>
+              <a href="mailto:hello@tkea237.com" className="text-lg underline font-medium hover:text-primary-600 transition-colors">hello@tkea237.com</a>
             </div>
 
             <div className="space-y-1">
               <div className="text-sm uppercase tracking-wider text-secondary-500 font-semibold">{t('contact.location')}</div>
-              <div className="text-lg font-medium">Damascus, Syria</div>
+              <div className="text-lg font-medium">Seoul, South Korea • Africa Export</div>
             </div>
           </div>
         </div>

@@ -1,4 +1,13 @@
-import { supabase, signIn, signOut, getSession } from './supabase';
+import { supabase, supabaseUrl, signIn, signOut, getSession } from './supabase';
+
+const getUploadPaths = (product) => {
+  const publicPrefix = `${supabaseUrl}/storage/v1/object/public/uploads/`;
+  return [product.heroImageUrl, ...(product.galleryImageUrls || [])]
+    .filter((url) => typeof url === 'string' && url.startsWith(publicPrefix))
+    .map((url) => decodeURIComponent(url.slice(publicPrefix.length)))
+    .filter(Boolean)
+    .filter((path, index, paths) => paths.indexOf(path) === index);
+};
 
 // Helper to transform snake_case to camelCase
 const toCamelCase = (obj) => {
@@ -32,6 +41,17 @@ const toSnakeCase = (obj) => {
 
 // API wrapper that mimics axios interface
 const createResponse = (data) => ({ data: toCamelCase(data) });
+
+const makeCategorySlug = (categoryData = {}) => {
+  const source = categoryData.slug || categoryData.name || categoryData.nameEn || categoryData.nameAr || 'category';
+  const slug = String(source)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+
+  return slug || 'category';
+};
 
 // Parse URL params
 const parseParams = (url) => {
@@ -82,6 +102,7 @@ const publicApi = {
     let products = (data || []).map(p => ({
       ...p,
       ingredients: (p.ingredients || []).map(pi => pi.ingredient),
+      specs: p.specs || {},
       // Build categories array from junction table
       productCategories: (p.categories || []).map(pc => pc.category).filter(Boolean),
     }));
@@ -406,10 +427,31 @@ const adminApi = {
 
   // DELETE /admin/products/:id
   async deleteProduct(id) {
+    const productId = parseInt(id);
+    const { data: product, error: fetchError } = await supabase
+      .from('products')
+      .select('hero_image_url, gallery_image_urls')
+      .eq('id', productId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const uploadPaths = getUploadPaths({
+      heroImageUrl: product.hero_image_url,
+      galleryImageUrls: product.gallery_image_urls,
+    });
+
+    if (uploadPaths.length) {
+      const { error: storageError } = await supabase.storage
+        .from('uploads')
+        .remove(uploadPaths);
+      if (storageError) throw storageError;
+    }
+
     const { error } = await supabase
       .from('products')
       .delete()
-      .eq('id', parseInt(id));
+      .eq('id', productId);
 
     if (error) throw error;
     return { data: { success: true } };
@@ -560,8 +602,23 @@ const adminApi = {
     return createResponse(data);
   },
 
+  async getCategoryById(id) {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('id', parseInt(id))
+      .single();
+    if (error) throw error;
+    return createResponse(data);
+  },
+
   async createCategory(categoryData) {
-    const snakeData = toSnakeCase(categoryData);
+    const safeData = {
+      ...categoryData,
+      name: categoryData.name || categoryData.nameEn || categoryData.nameAr || 'Category',
+      slug: makeCategorySlug(categoryData),
+    };
+    const snakeData = toSnakeCase(safeData);
     const { data, error } = await supabase
       .from('categories')
       .insert(snakeData)
@@ -572,7 +629,12 @@ const adminApi = {
   },
 
   async updateCategory(id, categoryData) {
-    const snakeData = toSnakeCase(categoryData);
+    const safeData = {
+      ...categoryData,
+      name: categoryData.name || categoryData.nameEn || categoryData.nameAr || 'Category',
+      slug: makeCategorySlug(categoryData),
+    };
+    const snakeData = toSnakeCase(safeData);
     delete snakeData.id;
 
     const { data, error } = await supabase
@@ -816,6 +878,7 @@ const routeRequest = async (method, url, data) => {
         if (method === 'DELETE' && id) return adminApi.deleteIngredient(id);
         break;
       case 'categories':
+        if (method === 'GET' && id) return adminApi.getCategoryById(id);
         if (method === 'GET') return adminApi.getCategories();
         if (method === 'POST') return adminApi.createCategory(data);
         if (method === 'PUT' && id) return adminApi.updateCategory(id, data);

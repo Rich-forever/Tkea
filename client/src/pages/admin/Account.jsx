@@ -8,7 +8,7 @@ export default function AdminAccount() {
   const { t } = useTranslation();
   const { showToast } = useToast();
 
-  const email = localStorage.getItem('af_admin_email') || 'admin@aseelfemme.local';
+  const email = localStorage.getItem('af_admin_email') || 'admin@tkea237.local';
 
   const [apiKey, setApiKey] = useState('');
   const [hasApiKey, setHasApiKey] = useState(false);

@@ -31,6 +31,9 @@ export default function Accessories() {
                     <p className="mt-1 text-sm text-black/60 max-w-xl">
                         {t('accessories.subtitle')}
                     </p>
+                    <p className="mt-2 text-sm text-black/50 max-w-2xl">
+                        Smart add-ons for phones, home essentials, travel, and everyday convenience.
+                    </p>
                 </div>
 
                 {loading ? (

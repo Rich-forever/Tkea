@@ -20,12 +20,12 @@ function LangSwitcher() {
     i18n.changeLanguage(lng);
     localStorage.setItem('i18nextLng', lng);
     document.documentElement.lang = lng;
-    document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.dir = 'ltr';
   };
   return (
     <div className="flex items-center gap-2 text-sm">
-      {['en', 'ar'].map(l => (
-        <button key={l} onClick={() => change(l)} className={`px-2 py-1 rounded-full border ${i18n.language === l ? 'font-semibold border-charcoal' : 'border-black/10'}`}>{l.toUpperCase()}</button>
+      {['en', 'ko'].map(l => (
+        <button key={l} onClick={() => change(l)} className={`px-2 py-1 rounded-full border ${i18n.language === l ? 'font-semibold border-charcoal' : 'border-black/10'}`}>{l === 'ko' ? 'KO' : 'EN'}</button>
       ))}
     </div>
   );
@@ -155,9 +155,6 @@ export default function Header() {
   const renderActions = () => (
     <div className="flex items-center gap-3">
       <LangSwitcher />
-      <a href={BEEORDER_URL} target="_blank" rel="noreferrer" className="btn btn-primary">
-        {t('cta.order')}
-      </a>
     </div>
   );
 
@@ -167,7 +164,7 @@ export default function Header() {
       className={`font-serif tracking-[0.12em] uppercase text-charcoal inline-block ${className}`}
     >
       <span className="relative inline-block">
-        ASEELFEMME
+        TKEA237
         <span className="absolute -right-1 -bottom-3 text-[10px] tracking-normal">®</span>
       </span>
     </Link>
@@ -216,7 +213,7 @@ export default function Header() {
             className="font-serif text-2xl tracking-[0.12em] uppercase text-charcoal text-center flex-1"
           >
             <span className="relative inline-block">
-              ASEELFEMME
+              TKEA237
               <span className="absolute -right-1 -bottom-3 text-[10px] tracking-normal">®</span>
             </span>
           </Link>

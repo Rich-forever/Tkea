@@ -51,7 +51,7 @@ export async function completeProduct(partialProduct) {
     const existingCategories = (categoriesRes.data || []).map(c => c.name);
     const existingIngredients = (ingredientsRes.data || []).map(i => i.name_en).filter(Boolean);
 
-    const prompt = `You are a content writer for AseelFemme, a luxury organic handcrafted soap brand from Jordan.
+    const prompt = `You are a content writer for TKEA237, a Korean trade and export brand serving African markets.
 
 Given the following partial product data, COMPLETE ONLY THE EMPTY/MISSING fields.
 Keep any existing values exactly as they are - only fill in what's empty or missing.
@@ -104,7 +104,7 @@ export async function completeIngredient(partialIngredient) {
     const genAI = await createGeminiClient();
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-    const prompt = `You are a content writer for AseelFemme, a luxury organic soap brand.
+    const prompt = `You are a content writer for TKEA237, a Korean trade and export brand serving African markets.
 
 Given the following partial ingredient data, COMPLETE ONLY THE EMPTY/MISSING fields.
 Keep any existing values exactly as they are.

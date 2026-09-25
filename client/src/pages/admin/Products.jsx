@@ -172,7 +172,7 @@ export default function AdminProducts() {
             </div>
             <div className="p-4 flex flex-col gap-1">
               <div className="flex items-center justify-between gap-2">
-                <div className="font-semibold truncate">{p.name}</div>
+                <div className="font-semibold truncate">{p.nameEn || p.name || p.nameAr || 'Untitled product'}</div>
                 <span
                   className={`text-[10px] px-2 py-0.5 rounded-full border uppercase tracking-wide ${getStatusClasses(
                     p.status,
@@ -181,7 +181,7 @@ export default function AdminProducts() {
                   {p.status}
                 </span>
               </div>
-              <div className="text-xs text-black/60 truncate">{p.category}</div>
+              <div className="text-xs text-black/60 truncate">{p.categoryEn || p.category || p.categoryAr || 'General'}</div>
               <div className="mt-3 flex gap-2 text-xs">
                 <button
                   type="button"

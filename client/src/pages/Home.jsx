@@ -35,7 +35,6 @@ export default function Home() {
             <motion.p variants={fadeInUp} className="mt-4 text-black/70">{t('hero.sub')}</motion.p>
             <motion.div variants={fadeInUp} className="mt-6 flex gap-3">
               <Link to="/collection" className="btn btn-primary">{t('cta.explore')}</Link>
-              <a className="btn btn-secondary" href={BEEORDER_URL} target="_blank" rel="noreferrer">{t('cta.order')}</a>
             </motion.div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="relative">
@@ -46,7 +45,7 @@ export default function Home() {
             />
             <div className="relative rounded-full shadow-soft w-full aspect-square overflow-hidden">
               <img
-                src="/logo_transperent.png"
+                src="/tkeapt.png"
                 alt={t('brand')}
                 className="w-full h-full object-contain scale-125 md:-mt-4"
               />
@@ -55,12 +54,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-px max-w-7xl mx-auto mt-20">
-        <div className="flex items-end justify-between">
-          <h2 className="font-serif text-3xl">{t('sections.signature_collection')}</h2>
-          <Link to="/collection" className="text-sm underline">{t('cta.view_all')}</Link>
+      <section className="container-px max-w-7xl mx-auto mt-12 sm:mt-16 md:mt-20">
+        <div className="flex items-end justify-between gap-3">
+          <h2 className="font-serif text-2xl sm:text-3xl">{t('sections.signature_collection')}</h2>
+          <Link to="/collection" className="text-xs sm:text-sm underline whitespace-nowrap">{t('cta.view_all')}</Link>
         </div>
-        <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-5 flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory md:overflow-visible md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:snap-none">
           {featured.map(p => (
             <motion.div
               key={p.id}
@@ -68,7 +67,7 @@ export default function Home() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "0px" }}
-              className="h-full"
+              className="h-full shrink-0 w-[78vw] max-w-[320px] sm:w-[44vw] md:w-auto md:max-w-none snap-center md:snap-none"
             >
               <ProductCard product={p} />
             </motion.div>

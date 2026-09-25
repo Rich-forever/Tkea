@@ -38,6 +38,7 @@ const empty = {
   galleryImageUrls: [],
   benefitsEn: [],
   benefitsAr: [],
+  specs: {},
 };
 
 const slugify = (value) =>
@@ -46,6 +47,99 @@ const slugify = (value) =>
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '');
+
+const getCategorySpecFields = (categoryName = '') => {
+  const normalized = String(categoryName || '').toLowerCase();
+
+  if (normalized.includes('car') || normalized.includes('vehicle')) {
+    return [
+      { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 15000' },
+      { key: 'year', label: 'Year', type: 'number', placeholder: 'e.g. 2023' },
+      { key: 'mileage', label: 'Mileage', type: 'number', placeholder: 'e.g. 28000' },
+      { key: 'transmission', label: 'Transmission', placeholder: 'Automatic / Manual' },
+      { key: 'fuelType', label: 'Fuel type', placeholder: 'Petrol / Diesel / Hybrid' },
+      { key: 'condition', label: 'Condition', placeholder: 'New / Used / Excellent' },
+      { key: 'color', label: 'Color', placeholder: 'Exterior color' },
+      { key: 'engine', label: 'Engine', placeholder: '2.0L Turbo' },
+    ];
+  }
+
+  if (normalized.includes('phone') || normalized.includes('mobile')) {
+    return [
+      { key: 'brand', label: 'Brand', placeholder: 'Samsung / iPhone / Xiaomi' },
+      { key: 'model', label: 'Model', placeholder: 'Galaxy S24 / iPhone 15' },
+      { key: 'storage', label: 'Storage', placeholder: '128GB / 256GB' },
+      { key: 'ram', label: 'RAM', placeholder: '6GB / 8GB' },
+      { key: 'battery', label: 'Battery', placeholder: '4500mAh' },
+      { key: 'network', label: 'Network', placeholder: '5G / LTE' },
+      { key: 'condition', label: 'Condition', placeholder: 'New / Used / Refurbished' },
+      { key: 'color', label: 'Color', placeholder: 'Black / Blue / White' },
+      { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 499' },
+    ];
+  }
+
+  if (normalized.includes('laptop') || normalized.includes('pc') || normalized.includes('computer')) {
+    return [
+      { key: 'brand', label: 'Brand', placeholder: 'Dell / HP / Lenovo' },
+      { key: 'model', label: 'Model', placeholder: 'Latitude 5440' },
+      { key: 'processor', label: 'Processor', placeholder: 'Intel i7 / Ryzen 7' },
+      { key: 'ram', label: 'RAM', placeholder: '16GB' },
+      { key: 'storage', label: 'Storage', placeholder: '512GB SSD' },
+      { key: 'screenSize', label: 'Screen size', placeholder: '15.6 inch' },
+      { key: 'condition', label: 'Condition', placeholder: 'New / Used / Refurbished' },
+      { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 899' },
+    ];
+  }
+
+  if (normalized.includes('tv') || normalized.includes('television')) {
+    return [
+      { key: 'brand', label: 'Brand', placeholder: 'LG / Samsung / Sony' },
+      { key: 'model', label: 'Model', placeholder: 'QLED 4K' },
+      { key: 'screenSize', label: 'Screen size', placeholder: '55 inch' },
+      { key: 'resolution', label: 'Resolution', placeholder: '4K UHD / Full HD' },
+      { key: 'smartTv', label: 'Smart TV', placeholder: 'Yes / No' },
+      { key: 'condition', label: 'Condition', placeholder: 'New / Used / Refurbished' },
+      { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 699' },
+    ];
+  }
+
+  if (normalized.includes('game') || normalized.includes('gaming')) {
+    return [
+      { key: 'brand', label: 'Brand', placeholder: 'PlayStation / Xbox / Nintendo' },
+      { key: 'model', label: 'Model', placeholder: 'PS5 / Xbox Series X' },
+      { key: 'platform', label: 'Platform', placeholder: 'Console / Accessory / Game' },
+      { key: 'condition', label: 'Condition', placeholder: 'New / Used' },
+      { key: 'edition', label: 'Edition', placeholder: 'Standard / Digital / Deluxe' },
+      { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 399' },
+    ];
+  }
+
+  if (normalized.includes('beauty') || normalized.includes('cosmetic') || normalized.includes('care') || normalized.includes('skin')) {
+    return [
+      { key: 'brand', label: 'Brand', placeholder: 'Brand name' },
+      { key: 'volume', label: 'Volume', placeholder: '100ml / 50g' },
+      { key: 'skinType', label: 'Skin type', placeholder: 'Dry / Oily / Combination' },
+      { key: 'benefit', label: 'Main benefit', placeholder: 'Hydration / Brightening' },
+      { key: 'ingredient', label: 'Key ingredient', placeholder: 'Vitamin C / Hyaluronic Acid' },
+      { key: 'condition', label: 'Condition', placeholder: 'New / Sealed' },
+      { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 59' },
+    ];
+  }
+
+  return [
+    { key: 'brand', label: 'Brand', placeholder: 'Brand name' },
+    { key: 'model', label: 'Model', placeholder: 'Model or version' },
+    { key: 'condition', label: 'Condition', placeholder: 'New / Used / Refurbished' },
+    { key: 'color', label: 'Color', placeholder: 'Main color' },
+    { key: 'price', label: 'Price', type: 'number', placeholder: 'e.g. 299' },
+  ];
+};
+
+const humanizeSpecKey = (key = '') =>
+  String(key)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
 export default function AdminProductEdit() {
   const { t, i18n } = useTranslation();
@@ -374,8 +468,12 @@ export default function AdminProductEdit() {
       selectedIngredientIds,
       initialState.selectedIngredientIds || []
     );
-    return !(sameForm && sameIngredients);
-  }, [form, selectedIngredientIds, initialState]);
+    const sameCategories = areArraysEqual(
+      selectedCategoryIds,
+      initialState.selectedCategoryIds || []
+    );
+    return !(sameForm && sameIngredients && sameCategories);
+  }, [form, selectedIngredientIds, selectedCategoryIds, initialState]);
 
   const blocker = useBlocker(isDirty && !ignoreUnsavedGuard);
 
@@ -384,6 +482,7 @@ export default function AdminProductEdit() {
     const payload = {
       form,
       selectedIngredientIds,
+      selectedCategoryIds,
     };
     try {
       localStorage.setItem(draftKey, JSON.stringify(payload));
@@ -403,6 +502,17 @@ export default function AdminProductEdit() {
       setConfirmLeaveOpen(true);
     }
   }, [blocker.state, isDirty, ignoreUnsavedGuard, confirmLeaveOpen]);
+
+  const primaryCategoryName = useMemo(() => {
+    const currentId = selectedCategoryIds[0];
+    const category = knownCategories.find((item) => item.id === currentId);
+    return category?.nameEn || category?.name || form.categoryEn || '';
+  }, [selectedCategoryIds, knownCategories, form.categoryEn]);
+
+  const categorySpecFields = useMemo(
+    () => getCategorySpecFields(primaryCategoryName),
+    [primaryCategoryName]
+  );
 
   const categoryOptions = useMemo(() => {
     const cats = knownCategories || [];
@@ -614,80 +724,36 @@ export default function AdminProductEdit() {
       ...restForm
     } = form;
 
+    if (!selectedCategoryIds.length) {
+      showToast('Please select a collection/category before saving the product.', 'error');
+      return;
+    }
+
     // Required-field validation
     const errors = {};
 
-    if (!restForm.nameEn?.trim()) errors.nameEn = true;
-    if (!restForm.nameAr?.trim()) errors.nameAr = true;
-    if (!restForm.shortDescriptionEn?.trim()) errors.shortDescriptionEn = true;
-    if (!restForm.shortDescriptionAr?.trim()) errors.shortDescriptionAr = true;
-    if (!restForm.categoryEn?.trim()) errors.categoryEn = true;
-    if (!restForm.categoryAr?.trim()) errors.categoryAr = true;
-    if (!restForm.skinType) errors.skinType = true;
-    if (!restForm.shapeEn?.trim()) errors.shapeEn = true;
-    if (!restForm.shapeAr?.trim()) errors.shapeAr = true;
-    if (!restForm.colorEn?.trim()) errors.colorEn = true;
-    if (!restForm.colorAr?.trim()) errors.colorAr = true;
-    if (
-      weightGrams === '' ||
-      weightGrams == null ||
-      Number(weightGrams) <= 0
-    ) {
-      errors.weightGrams = true;
-    }
-    if (!restForm.heroImageUrl?.trim()) errors.heroImageUrl = true;
-
-    if (Object.keys(errors).length) {
-      setFieldErrors(errors);
-      showToast(t('admin.products.missing_required'), 'error');
-
-      const fieldOrder = [
-        'heroImageUrl',
-        'nameEn',
-        'nameAr',
-        'shortDescriptionEn',
-        'shortDescriptionAr',
-        'categoryEn',
-        'categoryAr',
-        'skinType',
-        'shapeEn',
-        'shapeAr',
-        'colorEn',
-        'colorAr',
-        'weightGrams',
-      ];
-      const refMap = {
-        heroImageUrl: heroRef,
-        nameEn: nameRef,
-        nameAr: nameRef,
-        shortDescriptionEn: shortDescriptionRef,
-        shortDescriptionAr: shortDescriptionRef,
-        categoryEn: categoryRef,
-        categoryAr: categoryRef,
-
-        skinType: skinTypeRef,
-        shapeEn: shapeRef,
-        shapeAr: shapeRef,
-        colorEn: colorRef,
-        colorAr: colorRef,
-        weightGrams: weightRef,
-      };
-
-      for (let i = 0; i < fieldOrder.length; i += 1) {
-        const key = fieldOrder[i];
-        if (!errors[key]) continue;
-        const node = refMap[key]?.current;
-        if (node) {
-          node.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          if (typeof node.focus === 'function') {
-            node.focus();
-          }
-        }
-        break;
-      }
-
-      return;
-    }
+    // Keep the form flexible for non-beauty catalog items (cars, electronics, etc.)
+    // while still generating sensible defaults and preserving the existing UI.
+    const fallbackNameEn = restForm.nameEn?.trim() || 'Untitled Product';
+    const fallbackNameAr = restForm.nameAr?.trim() || 'منتج غير مسمى';
+    const fallbackShortEn = restForm.shortDescriptionEn?.trim() || 'Product description';
+    const fallbackShortAr = restForm.shortDescriptionAr?.trim() || 'وصف المنتج';
+    const fallbackCategoryEn = restForm.categoryEn?.trim() || 'General';
+    const fallbackCategoryAr = restForm.categoryAr?.trim() || 'عام';
+    const fallbackSkinType = restForm.skinType || 'ALL';
+    const fallbackShapeEn = restForm.shapeEn?.trim() || 'General';
+    const fallbackShapeAr = restForm.shapeAr?.trim() || fallbackShapeEn;
+    const fallbackColorEn = restForm.colorEn?.trim() || 'Default';
+    const fallbackColorAr = restForm.colorAr?.trim() || fallbackColorEn;
+    const fallbackHeroImage =
+      restForm.heroImageUrl?.trim() ||
+      'https://placehold.co/1200x1200/EEE7DC/3E433E?text=Product';
+    const fallbackSlug =
+      (restForm.slug || `${fallbackNameEn}-${Date.now()}`)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '') || `product-${Date.now()}`;
 
     // Base tags derived from core fields - now separated by language
     const basePartsEn = [];
@@ -743,17 +809,38 @@ export default function AdminProductEdit() {
       weightGrams === '' || weightGrams == null
         ? null
         : Number(weightGrams);
+
+    const specs = { ...(restForm.specs || {}) };
+    categorySpecFields.forEach((field) => {
+      const value = specs[field.key];
+      if (value !== undefined && value !== null && value !== '') {
+        specs[field.key] = typeof value === 'string' ? value.trim() : value;
+      }
+    });
+
     const data = {
       ...restForm,
-      shape: restForm.shapeEn || restForm.shape,
-      color: restForm.colorEn || restForm.color,
+      nameEn: fallbackNameEn,
+      nameAr: fallbackNameAr,
+      slug: fallbackSlug,
+      shortDescriptionEn: fallbackShortEn,
+      shortDescriptionAr: fallbackShortAr,
+      categoryEn: fallbackCategoryEn,
+      categoryAr: fallbackCategoryAr,
+      shapeEn: fallbackShapeEn,
+      shapeAr: fallbackShapeAr,
+      colorEn: fallbackColorEn,
+      colorAr: fallbackColorAr,
+      shape: fallbackShapeEn || restForm.shape,
+      color: fallbackColorEn || restForm.color,
+      heroImageUrl: fallbackHeroImage,
       tagsEn,
       tagsAr,
       tags: tagsEn, // Keep tags for backward compatibility
       benefitsEn: [],
       benefitsAr: [],
       galleryImageUrls: restForm.galleryImageUrls || [],
-      skinType: restForm.skinType || 'ALL',
+      skinType: fallbackSkinType,
       weightGrams: Number.isNaN(parsedWeight) ? null : parsedWeight,
       isVegan: true,
       isCrueltyFree: true,
@@ -761,9 +848,10 @@ export default function AdminProductEdit() {
       ingredients: selectedIngredientIds.map(id => ({ id })),
       categories: selectedCategoryIds.map(id => ({ id })),
       longDescriptionEn:
-        restForm.longDescriptionEn || restForm.shortDescriptionEn || ' ',
+        restForm.longDescriptionEn || restForm.shortDescriptionEn || fallbackShortEn,
       longDescriptionAr:
-        restForm.longDescriptionAr || restForm.shortDescriptionAr || ' ',
+        restForm.longDescriptionAr || restForm.shortDescriptionAr || fallbackShortAr,
+      specs,
     };
     // Remove form-only fields that shouldn't be sent to DB
     delete data.tagsInputEn;
@@ -954,8 +1042,8 @@ export default function AdminProductEdit() {
   };
 
   return (
-    <div className="container-px max-w-3xl mx-auto py-10">
-      <div className="mb-6">
+    <div className="container-px max-w-5xl mx-auto py-6 sm:py-10 px-3 sm:px-4">
+      <div className="mb-4 sm:mb-6">
         <div className="flex items-center justify-between gap-3 mb-2">
           <button
             type="button"
@@ -969,7 +1057,7 @@ export default function AdminProductEdit() {
           </button>
           <div className="hidden sm:block" />
         </div>
-        <h1 className="font-serif text-3xl text-center">{title}</h1>
+        <h1 className="font-serif text-2xl sm:text-3xl text-center">{title}</h1>
         {productUpdatedAt && (
           <div className="mt-1 text-center text-[11px] text-black/45">
             {t('admin.products.last_updated_product', {
@@ -978,15 +1066,15 @@ export default function AdminProductEdit() {
           </div>
         )}
       </div>
-      <div className="bg-white rounded-3xl p-6 shadow-soft w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-black/10 pb-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-soft w-full">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between mb-5 sm:mb-6 border-b border-black/10 pb-4">
           <LanguageTabs
             activeLanguage={activeLanguage}
             onLanguageChange={setActiveLanguage}
             className="!mb-0 !border-0 !pb-0"
           />
-          <div className="flex gap-2">
-            <label className="btn btn-secondary cursor-pointer text-xs py-2 h-auto">
+          <div className="flex flex-col xs:flex-row gap-2 sm:flex-row">
+            <label className="btn btn-secondary cursor-pointer text-xs py-2 h-auto justify-center">
               {t('admin.common.import')}
               <input type="file" accept=".json" className="hidden" onChange={handleImport} />
             </label>
@@ -995,7 +1083,7 @@ export default function AdminProductEdit() {
             </button>
           </div>
         </div>
-        <form onSubmit={submit} className="grid gap-6">
+        <form onSubmit={submit} className="grid gap-4 sm:gap-6">
           <div className="rounded-2xl border border-black/5 bg-ivory/40 p-4 sm:p-5 grid gap-3 order-2">
             <div className="text-[11px] font-medium tracking-[0.16em] uppercase text-black/40">
               {t('admin.products.section_main')}
@@ -1076,41 +1164,41 @@ export default function AdminProductEdit() {
                 })}
               </div>
               {form.categoryAr && (
-                <div className="text-xs text-black/50 mt-1" dir="rtl">
-                  {t('admin.products.category')} (AR): {form.categoryAr}
+                <div className="text-xs text-black/50 mt-1" dir="ltr">
+                  {t('admin.products.category')} (KO): {form.categoryAr}
                 </div>
               )}
             </div>
-            <div className="grid gap-1" ref={skinTypeRef}>
-              <label className="text-xs text-black/60">
-                {t('filters.all_skin_types')}
-                {renderFieldUpdated('skinType')}
-              </label>
-              <FilterDropdown
-                label={t('filters.all_skin_types')}
-                value={form.skinType}
-                onChange={(val) => {
-                  setForm({ ...form, skinType: val || 'ALL' });
-                  clearFieldError('skinType');
-                }}
-                allowClear={false}
-                hasError={!!fieldErrors.skinType}
-                options={[
-                  { value: 'ALL', label: t('filters.skin_types.all') },
-                  { value: 'DRY', label: t('filters.skin_types.dry') },
-                  { value: 'OILY', label: t('filters.skin_types.oily') },
-                  {
-                    value: 'COMBINATION',
-                    label: t('filters.skin_types.combination'),
-                  },
-                  {
-                    value: 'SENSITIVE',
-                    label: t('filters.skin_types.sensitive'),
-                  },
-                ]}
-              />
-              {renderFieldUpdated('skinType')}
-            </div>
+            {categorySpecFields.length > 0 && (
+              <div className="rounded-2xl border border-black/5 bg-white/60 p-4">
+                <div className="text-[11px] font-medium tracking-[0.16em] uppercase text-black/40 mb-3">
+                  Collection details
+                </div>
+                <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+                  {categorySpecFields.map((field) => (
+                    <div key={field.key} className="grid gap-1">
+                      <label className="text-xs text-black/60">{field.label}</label>
+                      <input
+                        type={field.type || 'text'}
+                        value={form.specs?.[field.key] ?? ''}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setForm((prev) => ({
+                            ...prev,
+                            specs: {
+                              ...(prev.specs || {}),
+                              [field.key]: value,
+                            },
+                          }));
+                        }}
+                        className="rounded-xl px-4 py-2 border border-black/10"
+                        placeholder={field.placeholder || ''}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="grid gap-1">
               <label className="text-xs text-black/60">
                 {t('admin.products.shortDescription')} ({activeLanguage === 'en' ? 'English' : 'Arabic'})
@@ -1143,211 +1231,6 @@ export default function AdminProductEdit() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-black/5 bg-ivory/40 p-4 sm:p-5 grid gap-3 order-3">
-            <div className="text-[11px] font-medium tracking-[0.16em] uppercase text-black/40">
-              {t('admin.products.section_details')}
-            </div>
-            <div className="grid gap-1" ref={scentRef}>
-              <label className="text-xs text-black/60">
-                {t('product.scent_texture')} ({activeLanguage === 'en' ? 'English' : 'Arabic'})
-                {renderFieldUpdated(activeLanguage === 'en' ? 'scentProfileEn' : 'scentProfileAr')}
-              </label>
-              {activeLanguage === 'en' ? (
-                <textarea
-                  ref={scentRef}
-                  value={form.scentProfileEn}
-                  onChange={(e) => {
-                    setForm({ ...form, scentProfileEn: e.target.value });
-                    clearFieldError('scentProfileEn');
-                  }}
-                  className={`rounded-xl px-4 py-2 border border-black/10 min-h-[70px] ${fieldErrors.scentProfileEn ? 'border-red-400 bg-red-50' : ''
-                    }`}
-                />
-              ) : (
-                <textarea
-                  ref={scentRef}
-                  value={form.scentProfileAr}
-                  onChange={(e) => {
-                    setForm({ ...form, scentProfileAr: e.target.value });
-                    clearFieldError('scentProfileAr');
-                  }}
-                  className={`rounded-xl px-4 py-2 border border-black/10 min-h-[70px] text-right ${fieldErrors.scentProfileAr ? 'border-red-400 bg-red-50' : ''
-                    }`}
-                  dir="rtl"
-                />
-              )}
-            </div>
-            <div className="grid gap-1">
-              <label className="text-xs text-black/60">
-                {t('admin.products.shape')} ({activeLanguage === 'en' ? 'English' : 'Arabic'})
-                {renderFieldUpdated('shapeEn')}
-              </label>
-              {activeLanguage === 'en' ? (
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    ref={shapeRef}
-                    value={form.shapeEn || ''}
-                    onChange={(e) => {
-                      setForm({ ...form, shapeEn: e.target.value });
-                      clearFieldError('shapeEn');
-                    }}
-                    className={`rounded-xl px-4 py-2 border border-black/10 flex-1 ${fieldErrors.shapeEn ? 'border-red-400 bg-red-50' : ''
-                      }`}
-                    placeholder={t('admin.products.shape_placeholder')}
-                  />
-                  <FilterDropdown
-                    label={t('admin.products.shape_placeholder')}
-                    value={exactShapeMatch}
-                    onChange={(val) => {
-                      setForm({ ...form, shapeEn: val || '' });
-                      clearFieldError('shapeEn');
-                    }}
-                    allowClear={false}
-                    hasError={!!fieldErrors.shapeEn}
-                    options={[
-                      {
-                        value: '',
-                        label: t('admin.products.shape_placeholder'),
-                      },
-                      ...shapeOptions,
-                    ]}
-                  />
-                </div>
-              ) : (
-                <input
-                  ref={shapeRef}
-                  value={form.shapeAr || ''}
-                  onChange={(e) => {
-                    setForm({ ...form, shapeAr: e.target.value });
-                    clearFieldError('shapeAr');
-                  }}
-                  className={`rounded-xl px-4 py-2 border border-black/10 flex-1 text-right ${fieldErrors.shapeAr ? 'border-red-400 bg-red-50' : ''
-                    }`}
-                  dir="rtl"
-                  placeholder={t('admin.products.shape_placeholder')}
-                />
-              )}
-              {form.shapeEn && activeLanguage === 'ar' && (
-                <div className="text-xs text-black/50 mt-1">
-                  {t('admin.products.shape')} (EN): {form.shapeEn}
-                </div>
-              )}
-            </div>
-            <div className="grid gap-1">
-              <label className="text-xs text-black/60">
-                {t('admin.products.color')} ({activeLanguage === 'en' ? 'English' : 'Arabic'})
-                {renderFieldUpdated('colorEn')}
-              </label>
-              {activeLanguage === 'en' ? (
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    ref={colorRef}
-                    value={form.colorEn || ''}
-                    onChange={(e) => {
-                      setForm({ ...form, colorEn: e.target.value });
-                      clearFieldError('colorEn');
-                    }}
-                    className={`rounded-xl px-4 py-2 border border-black/10 flex-1 ${fieldErrors.colorEn ? 'border-red-400 bg-red-50' : ''
-                      }`}
-                    placeholder={t('admin.products.color_placeholder')}
-                  />
-                  <FilterDropdown
-                    label={t('admin.products.color_placeholder')}
-                    value={exactColorMatch}
-                    onChange={(val) => {
-                      setForm({ ...form, colorEn: val || '' });
-                      clearFieldError('colorEn');
-                    }}
-                    allowClear={false}
-                    hasError={!!fieldErrors.colorEn}
-                    options={[
-                      {
-                        value: '',
-                        label: t('admin.products.color_placeholder'),
-                      },
-                      ...colorOptions,
-                    ]}
-                  />
-                </div>
-              ) : (
-                <input
-                  ref={colorRef}
-                  value={form.colorAr || ''}
-                  onChange={(e) => {
-                    setForm({ ...form, colorAr: e.target.value });
-                    clearFieldError('colorAr');
-                  }}
-                  className={`rounded-xl px-4 py-2 border border-black/10 flex-1 text-right ${fieldErrors.colorAr ? 'border-red-400 bg-red-50' : ''
-                    }`}
-                  dir="rtl"
-                  placeholder={t('admin.products.color_placeholder')}
-                />
-              )}
-              {form.colorEn && activeLanguage === 'ar' && (
-                <div className="text-xs text-black/50 mt-1">
-                  {t('admin.products.color')} (EN): {form.colorEn}
-                </div>
-              )}
-            </div>
-            <div className="grid gap-1">
-              <label className="text-xs text-black/60">
-                {t('admin.products.weightGrams')}
-                {renderFieldUpdated('weightGrams')}
-              </label>
-              <input
-                ref={weightRef}
-                type="number"
-                min="0"
-                step="1"
-                value={form.weightGrams ?? ''}
-                onChange={(e) => {
-                  setForm({ ...form, weightGrams: e.target.value });
-                  clearFieldError('weightGrams');
-                }}
-                className={`rounded-xl px-4 py-2 border border-black/10 max-w-[10rem] ${fieldErrors.weightGrams ? 'border-red-400 bg-red-50' : ''
-                  }`}
-              />
-            </div>
-            <div className="grid gap-1">
-              <label className="text-xs text-black/60">{t('product.key_ingredients')}</label>
-              <div className="flex flex-col gap-3">
-                <MultiSelectDropdown
-                  label={t('product.key_ingredients')}
-                  values={selectedIngredientIds}
-                  onChange={(vals) => setSelectedIngredientIds(vals)}
-                  options={allIngredients.map((i) => ({
-                    value: i.id,
-                    label: i.nameEn || i.nameAr || i.name || 'Unnamed',
-                  }))}
-                />
-                <div className="space-y-1">
-                  <div className="text-[11px] uppercase tracking-[0.16em] text-black/40">
-                    {t('admin.products.key_ingredients_selected')}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedIngredientIds.map((idVal) => {
-                      const ing = allIngredients.find((i) => i.id === idVal);
-                      if (!ing) return null;
-                      return (
-                        <span
-                          key={idVal}
-                          className="px-3 py-1 rounded-full text-xs border bg-ivory text-black/70 border-black/10"
-                        >
-                          {ing.nameEn || ing.nameAr || ing.name || 'Unnamed'}
-                        </span>
-                      );
-                    })}
-                    {selectedIngredientIds.length === 0 && (
-                      <span className="text-xs text-black/45 italic">
-                        {t('admin.products.key_ingredients_none')}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="rounded-2xl border border-black/5 bg-ivory/40 p-4 sm:p-5 grid gap-3 order-1">
             <div className="text-[11px] font-medium tracking-[0.16em] uppercase text-black/40">
               {t('admin.products.section_image')}
@@ -1368,7 +1251,7 @@ export default function AdminProductEdit() {
                   <img
                     src={form.heroImageUrl}
                     alt={form.name || ''}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain bg-white"
                   />
                 ) : (
                   <div className="text-center text-xs text-black/50 px-4">
@@ -1411,7 +1294,7 @@ export default function AdminProductEdit() {
                   accept="image/*"
                   className="hidden"
                   disabled={uploading}
-                  onChange={(e) => startCropFromFile(e.target.files?.[0])}
+                  onChange={(e) => handleUpload(e.target.files?.[0])}
                 />
               </div>
             </div>
@@ -1454,43 +1337,6 @@ export default function AdminProductEdit() {
               {t('admin.products.section_meta')}
             </div>
             <div className="grid gap-1">
-              <label className="text-xs text-black/60">{t('admin.products.beeorderUrl')}</label>
-              <input
-                value={form.beeorderUrl}
-                onChange={(e) =>
-                  setForm({ ...form, beeorderUrl: e.target.value })
-                }
-                className="rounded-xl px-4 py-2 border border-black/10"
-              />
-            </div>
-            <div className="grid gap-1">
-              <label className="text-xs text-black/60">
-                {t('admin.products.tags')} ({activeLanguage === 'en' ? 'English' : 'Arabic'})
-              </label>
-              {activeLanguage === 'en' ? (
-                <input
-                  key="tags-meta-en"
-                  value={form.tagsInputEn || ''}
-                  onChange={(e) =>
-                    setForm({ ...form, tagsInputEn: e.target.value })
-                  }
-                  className="rounded-xl px-4 py-2 border border-black/10"
-                  placeholder="Tag1, Tag2, Tag3..."
-                />
-              ) : (
-                <input
-                  key="tags-meta-ar"
-                  value={form.tagsInputAr || ''}
-                  onChange={(e) =>
-                    setForm({ ...form, tagsInputAr: e.target.value })
-                  }
-                  className="rounded-xl px-4 py-2 border border-black/10 text-right"
-                  dir="rtl"
-                  placeholder="تاج1، تاج2، تاج3..."
-                />
-              )}
-            </div>
-            <div className="grid gap-1">
               <label className="text-xs text-black/60">{t('admin.products.status')}</label>
               <FilterDropdown
                 label={t('admin.products.status')}
@@ -1508,22 +1354,24 @@ export default function AdminProductEdit() {
             </div>
           </div>
 
-          <div className="flex gap-2 order-5 mt-2 justify-end">
-            <button
-              type="button"
-              onClick={handleAIComplete}
-              disabled={aiLoading}
-              className="btn btn-secondary flex items-center gap-2"
-              title={hasApiKey ? 'Fill empty fields with AI' : 'Configure API key in Account settings'}
-            >
-              {aiLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Sparkles className="w-4 h-4" />
-              )}
-              {aiLoading ? 'Completing...' : 'Complete with AI'}
-            </button>
-            <button type="submit" className="btn btn-primary">{title}</button>
+          <div className="order-5 mt-2 sticky bottom-2 z-10 bg-white/95 backdrop-blur-sm border border-black/5 rounded-2xl p-2 sm:p-0 sm:border-0 sm:bg-transparent sm:backdrop-blur-none sm:static">
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={handleAIComplete}
+                disabled={aiLoading}
+                className="btn btn-secondary flex items-center justify-center gap-2 w-full sm:w-auto"
+                title={hasApiKey ? 'Fill empty fields with AI' : 'Configure API key in Account settings'}
+              >
+                {aiLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+                {aiLoading ? 'Completing...' : 'Complete with AI'}
+              </button>
+              <button type="submit" className="btn btn-primary w-full sm:w-auto">{title}</button>
+            </div>
           </div>
         </form>
       </div >
