@@ -26,12 +26,25 @@ export default function ProductDetail() {
 
   const [activeImage, setActiveImage] = useState(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [imageAspect, setImageAspect] = useState({ width: 4, height: 3 });
 
   const scrollRef = React.useRef(null);
 
   useEffect(() => {
     if (p) setActiveImage(p.heroImageUrl);
   }, [p]);
+
+  useEffect(() => {
+    if (!activeImage) return;
+
+    const img = new Image();
+    img.onload = () => {
+      if (img.naturalWidth && img.naturalHeight) {
+        setImageAspect({ width: img.naturalWidth, height: img.naturalHeight });
+      }
+    };
+    img.src = activeImage;
+  }, [activeImage]);
 
   const scrollGallery = (dir) => {
     if (scrollRef.current) {
@@ -100,7 +113,8 @@ export default function ProductDetail() {
         <div className="grid md:grid-cols-2 gap-5 md:gap-10 lg:gap-12">
           <div className="order-1 space-y-3 w-full">
             <div
-              className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl shadow-soft bg-white border border-black/5 cursor-zoom-in aspect-[4/3] sm:aspect-[5/4] md:aspect-[4/3]"
+              className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl shadow-soft bg-white border border-black/5 cursor-zoom-in"
+              style={{ aspectRatio: `${imageAspect.width} / ${imageAspect.height}` }}
               onClick={() => setLightboxOpen(true)}
             >
               <img
@@ -133,6 +147,7 @@ export default function ProductDetail() {
                       key={idx}
                       onClick={() => setActiveImage(img)}
                       className={`relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 snap-center rounded-xl overflow-hidden border transition-all ${activeImage === img ? 'border-charcoal ring-1 ring-charcoal' : 'border-transparent opacity-70 hover:opacity-100'}`}
+                      style={{ aspectRatio: '1 / 1' }}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
